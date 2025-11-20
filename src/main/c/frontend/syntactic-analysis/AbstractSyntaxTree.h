@@ -14,8 +14,9 @@ ModuleDestructor initializeAbstractSyntaxTreeModule();
  * person, but without the madness).
  */
 
+/* UTILS */
+typedef enum EntityType EntityType;
 
-//NUEVO
 /* ENUM */
 typedef enum StatementType StatementType;
 typedef enum EventSpecType EventSpecType;
@@ -44,16 +45,11 @@ typedef struct DayList DayList;
 typedef struct EventBody EventBody;
 typedef struct EventProp EventProp;
 
-/**
- * Node types for the Abstract Syntax Tree (AST).
- */
-
-
-// ________________________________
-// ________________________________
-//          NUEVO
-// ________________________________
-// ________________________________
+/* UTILS */
+enum EntityType {
+	ENTITY_COLOR,
+	ENTITY_EVENT
+};
 
 /* ENUM */
 enum StatementType{
