@@ -1,5 +1,5 @@
-#ifndef CALCULATOR_HEADER
-#define CALCULATOR_HEADER
+#ifndef VALIDATOR_HEADER
+#define VALIDATOR_HEADER
 
 /**
  * We reuse the types from the AST for convenience, but you should separate
@@ -14,7 +14,7 @@
 #include <stdbool.h>
 
 /** Initialize module's internal state. */
-ModuleDestructor initializeCalculatorModule();
+ModuleDestructor initializeValidatorModule();
 
 /**
  * The result of a computation. It's considered valid only if "succeed" is
@@ -24,6 +24,11 @@ typedef struct {
 	bool succeeded;
 	int value;
 } ComputationResult;
+
+typedef struct {
+	bool succeeded;
+	int value;
+} ValidationResult;
 
 // typedef ComputationResult (*BinaryOperator)(const int, const int);
 
@@ -57,5 +62,7 @@ typedef struct {
 
 // ComputationResult computeStatement(Statement * statement);
 // ComputationResult computeEvent(Event * event);
+
+ValidationResult executeValidator(CompilerState * compilerState);
 
 #endif

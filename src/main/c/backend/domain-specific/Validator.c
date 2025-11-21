@@ -1,21 +1,21 @@
-#include "Calculator.h"
+#include "Validator.h"
 
 /* MODULE INTERNAL STATE */
 
 static Logger * _logger = NULL;
 
 /** Shutdown module's internal state. */
-void _shutdownCalculatorModule() {
+void _shutdownValidatorModule() {
 	if (_logger != NULL) {
-		logDebugging(_logger, "Destroying module: Calculator...");
+		logDebugging(_logger, "Destroying module: Validator...");
 		destroyLogger(_logger);
 		_logger = NULL;
 	}
 }
 
-ModuleDestructor initializeCalculatorModule() {
-	_logger = createLogger("Calculator");
-	return _shutdownCalculatorModule;
+ModuleDestructor initializeValidatorModule() {
+	_logger = createLogger("Validator");
+	return _shutdownValidatorModule;
 }
 
 /** PRIVATE FUNCTIONS */
@@ -161,3 +161,13 @@ ModuleDestructor initializeCalculatorModule() {
 // 	};
 // 	return computationResult;
 // }
+
+//TODO
+ValidationResult executeValidator(CompilerState * compilerState) {
+	Program * program = compilerState->abstractSyntaxtTree;
+	ValidationResult validationResult = {
+ 		.succeeded = true,
+		.value = 0
+	};
+	return validationResult;
+}
