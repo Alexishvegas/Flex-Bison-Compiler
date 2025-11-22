@@ -2,6 +2,7 @@
 #define SYMBOL_TABLE_HEADER
 
 #include "../../frontend/syntactic-analysis/AbstractSyntaxTree.h"
+#include "../../support/utils/TimeUtils.h"
 
 typedef struct Symbol Symbol;
 typedef struct SymbolTable SymbolTable;

@@ -320,6 +320,10 @@ Statements * AppendStatementSemanticAction(Statements * statements, Statement * 
 MonthBlock * StatementsMonthIntegerSemanticAction(int month, Statements * statements) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	MonthBlock * monthBlock = calloc(1, sizeof(MonthBlock));
+    if(month < 1 || month > 12){
+        logError(_logger, "Unknown month number (%d) in StatementsMonthNameSemanticAction", month);
+        return NULL;
+    }
 	monthBlock->month = month;
 	monthBlock->statements = statements;
 	return monthBlock;

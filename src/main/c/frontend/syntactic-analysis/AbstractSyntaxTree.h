@@ -3,6 +3,7 @@
 
 #include "../../support/logging/Logger.h"
 #include "../../support/type/ModuleDestructor.h"
+#include "../../support/utils/TimeUtils.h"
 #include <stdlib.h>
 
 /** Initialize module's internal state. */
@@ -24,7 +25,6 @@ typedef enum EventPropType EventPropType;
 
 /* TERMINAL */
 typedef struct Date Date;
-typedef struct Time Time;
 typedef struct Color Color;
 
 /* NON-TERMINAL */
@@ -76,11 +76,6 @@ struct Date {
     int day;
 };
 
-struct Time {
-    int hour;
-    int minute;
-};
-
 struct Color {
 	char * name;
 	char * hexValue;
@@ -115,7 +110,7 @@ struct YearBlock {
 	MonthBlocks * monthBlocks;
 };
 
-struct MonthBlocks {
+struct MonthBlocks { //agregar count
 	MonthBlock * months[12];
 };
 
