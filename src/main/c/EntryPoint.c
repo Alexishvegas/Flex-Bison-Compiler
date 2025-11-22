@@ -37,10 +37,9 @@ const int main(const int length, const char ** arguments) {
 	if (compilationStatus == SUCCEEDED) {
 		// ----------------------------------------------------------------------------------------
 		// Beginning of the Backend... ------------------------------------------------------------
-		// logDebugging(logger, "Computing expression value...");
-		// ComputationResult computationResult = executeCalculator(&compilerState);
+		SymbolTable * symbolTable;
 		logDebugging(logger, "Program Validation...");
-		ValidationResult validationResult = executeValidator(&compilerState);
+		ValidationResult validationResult = executeValidator(&compilerState, symbolTable);
 		// if (computationResult.succeeded) {
 		// 	compilerState.value = computationResult.value;
 		// 	executeGenerator(&compilerState);

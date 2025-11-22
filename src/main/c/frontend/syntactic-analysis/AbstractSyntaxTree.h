@@ -169,7 +169,7 @@ struct EventBody {
 	char * url;
 };
 
-
+//no va más creo
 struct EventProp {
     EventPropType type;
     union {

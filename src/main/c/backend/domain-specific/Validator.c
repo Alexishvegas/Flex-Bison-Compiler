@@ -18,156 +18,97 @@ ModuleDestructor initializeValidatorModule() {
 	return _shutdownValidatorModule;
 }
 
-/** PRIVATE FUNCTIONS */
 
-// static BinaryOperator _expressionTypeToBinaryOperator(const ExpressionType type);
-// static ComputationResult _invalidBinaryOperator(const int x, const int y);
-// static ComputationResult _invalidComputation();
-
-/**
- * Converts and expression type to the proper binary operator. If that's not
- * possible, returns a binary operator that always returns an invalid
- * computation result.
- */
-// static BinaryOperator _expressionTypeToBinaryOperator(const ExpressionType type) {
-// 	switch (type) {
-// 		case ADDITION: return add;
-// 		case DIVISION: return divide;
-// 		case MULTIPLICATION: return multiply;
-// 		case SUBTRACTION: return subtract;
-// 		default:
-// 			logError(_logger, "The specified expression type cannot be converted into character: %d", type);
-// 			return _invalidBinaryOperator;
-// 	}
-// }
-
-/**
- * A binary operator that always returns an invalid computation result.
- */
-// static ComputationResult _invalidBinaryOperator(const int x, const int y) {
-// 	return _invalidComputation();
-// }
-
-/**
- * A computation that always returns an invalid result.
- */
-// static ComputationResult _invalidComputation() {
-// 	ComputationResult computationResult = {
-// 		.succeeded = false,
-// 		.value = 0
-// 	};
-// 	return computationResult;
-// }
-
-// /** PUBLIC FUNCTIONS */
-
-// ComputationResult add(const int leftAddend, const int rightAddend) {
-// 	ComputationResult computationResult = {
-// 		.succeeded = true,
-// 		.value = leftAddend + rightAddend
-// 	};
-// 	return computationResult;
-// }
-
-// ComputationResult divide(const int dividend, const int divisor) {
-// 	const int sign = dividend < 0 ? -1 : +1;
-// 	const bool divisionByZero = divisor == 0 ? true : false;
-// 	if (divisionByZero) {
-// 		logError(_logger, "The divisor cannot be zero (the computation was %d/%d).", dividend, divisor);
-// 	}
-// 	ComputationResult computationResult = {
-// 		.succeeded = divisionByZero ? false : true,
-// 		.value = divisionByZero ? (sign * INT_MAX) : (dividend / divisor)
-// 	};
-// 	return computationResult;
-// }
-
-// ComputationResult multiply(const int multiplicand, const int multiplier) {
-// 	ComputationResult computationResult = {
-// 		.succeeded = true,
-// 		.value = multiplicand * multiplier
-// 	};
-// 	return computationResult;
-// }
-
-// ComputationResult subtract(const int minuend, const int subtract) {
-// 	ComputationResult computationResult = {
-// 		.succeeded = true,
-// 		.value = minuend - subtract
-// 	};
-// 	return computationResult;
-// }
-
-// ComputationResult computeConstant(Constant * constant) {
-// 	ComputationResult computationResult = {
-// 		.succeeded = true,
-// 		.value = constant->value
-// 	};
-// 	return computationResult;
-// }
-
-// ComputationResult computeExpression(Expression * expression) {
-// 	switch (expression->type) {
-// 		case ADDITION:
-// 		case DIVISION:
-// 		case MULTIPLICATION:
-// 		case SUBTRACTION:
-// 			ComputationResult leftResult = computeExpression(expression->leftExpression);
-// 			ComputationResult rightResult = computeExpression(expression->rightExpression);
-// 			if (leftResult.succeeded && rightResult.succeeded) {
-// 				BinaryOperator binaryOperator = _expressionTypeToBinaryOperator(expression->type);
-// 				return binaryOperator(leftResult.value, rightResult.value);
-// 			}
-// 			else {
-// 				return _invalidComputation();
-// 			}
-// 		case FACTOR:
-// 			return computeFactor(expression->factor);
-// 		default:
-// 			return _invalidComputation();
-// 	}
-// }
-
-// ComputationResult computeFactor(Factor * factor) {
-// 	switch (factor->type) {
-// 		case CONSTANT:
-// 			return computeConstant(factor->constant);
-// 		case EXPRESSION:
-// 			return computeExpression(factor->expression);
-// 		default:
-// 			return _invalidComputation();
-// 	}
-// }
-//testeo
-// ComputationResult executeCalculator(CompilerState * compilerState) {
-// 	Program * program = compilerState->abstractSyntaxtTree;
-// 	//return computeExpression(program->expression);
-// 	ComputationResult computationResult = {
-//  		.succeeded = true,
-// 		.value = 10
-// 	};
-// 	// return computeStatement(program->firstStatement);
-// 	return computationResult;
-// }
-
-// ComputationResult computeStatement(Statement * statement) {
-// 	return computeEvent(statement->event);
-// }
-
-// ComputationResult computeEvent(Event * event) {
-// 	ComputationResult computationResult = {
-// 		.succeeded = true,
-// 		.value = 10
-// 	};
-// 	return computationResult;
-// }
-
-//TODO
-ValidationResult executeValidator(CompilerState * compilerState) {
+ValidationResult executeValidator(CompilerState * compilerState, SymbolTable * table) {
+	initSymbolTable(table);
 	Program * program = compilerState->abstractSyntaxtTree;
+	bool validHeader = validateHeader(program->header);
+	bool validYearBlock = validateYearBlock(program->yearBlock);
 	ValidationResult validationResult = {
- 		.succeeded = true,
+ 		.succeeded = validHeader && validYearBlock,
 		.value = 0
 	};
 	return validationResult;
+}
+
+bool validateHeader(Header * header){
+	bool validTimezone = validateTimezone(header->timezoneDecl);
+	bool validColorList = validateColorList(header->colorList);
+	return validTimezone && validColorList;
+}
+
+bool validateTimezone(TimezoneDecl * timezoneDecl) {
+	if(timezoneDecl == NULL){
+		logDebugging(_logger, "Valid Timezone (no timezone)");
+		return true;
+	}
+	char * timezone = timezoneDecl->timezone;
+
+	char *signPtr = strchr(timezone, '+');
+    if (signPtr == NULL) {
+        signPtr = strchr(timezone, '-');
+    }
+    if (signPtr == NULL) {
+		logError(_logger, "Invalid Timezone, no sign");
+        return false; 
+    }
+
+	const char *validPrefixes[] = {
+        "UTC", "GMT",
+        "EST","EDT","CST","CDT","MST","MDT","PST","PDT",
+        "WET","CET","EET"
+    };
+	int prefixLen = signPtr - timezone;
+	char * prefix;
+	strncpy(prefix, timezone, prefixLen);
+	prefix[prefixLen] = '\0';
+	bool prefixOK = false;
+    for (int i = 0; validPrefixes[i] != NULL && prefixOK==false; i++) {
+        if (strcmp(prefix, validPrefixes[i]) == 0) {
+            prefixOK = true;
+        }
+    }
+    if (!prefixOK){
+		logError(_logger, "Invalid Timezone, prefix not recognized");
+		return false;
+	}
+
+	int sign = (*signPtr == '-') ? -1 : 1;
+    int offset = atoi(signPtr + 1);  // La regex ya garantiza números válidos
+
+    int finalOffset = sign * offset;
+    if (finalOffset < -12 || finalOffset > 14) {
+		logError(_logger, "Invalid Timezone, invalid offset");
+        return false;
+    }
+
+	logDebugging(_logger, "Valid Timezone");
+	return true;
+}
+
+bool validateColorList(ColorList * colorList) {
+	if(colorList == NULL){
+		logDebugging(_logger, "Valid ColorList (no colorList)");
+	}
+	ColorDef * current = colorList->firstColorDef;
+	
+	bool success = true;
+	while(current != NULL && success){
+		ColorData * data = {
+							current->color->hexValue
+						};
+		success = addSymbol(current->color->name, ENTITY_COLOR, data);
+		if(!success){
+			logError(_logger, "Invalid color declaration");
+			return false;
+		}
+		current = current->next;
+	}
+
+	logDebugging(_logger, "Valid ColorList");
+	return true;
+}
+
+bool validateYearBlock(YearBlock * yearBlock){
+	return true;
 }
