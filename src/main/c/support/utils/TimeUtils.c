@@ -32,7 +32,7 @@ int normalizeWeekday(int tm_wday) {
     return (tm_wday + 6) % 7;
 }
 
-static int daysInMonth(int year, int month) {
+int daysInMonth(int year, int month) {
     switch (month) {
         case 1: case 3: case 5: case 7: case 8: case 10: case 12:
             return 31;
@@ -46,4 +46,14 @@ static int daysInMonth(int year, int month) {
                 return 28;
     }
     return 0;
+}
+
+/* convierte Time a "HH:MM". Si time == NULL devuelve cadena vacía. */
+void timeToString(Time *time, char *out, size_t outlen) {
+    if (!time) {
+        out[0] = '\0';
+        return;
+    }
+    /* asegurar dos dígitos */
+    snprintf(out, outlen, "%02d:%02d", time->hour, time->minute);
 }

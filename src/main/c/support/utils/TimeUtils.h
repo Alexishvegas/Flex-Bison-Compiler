@@ -12,7 +12,9 @@ struct Time {
 };
 
 int compareTime(Time *t1, Time *t2);
+int daysInMonth(int year, int month);
 int weekday(int year, int month, int day);
 int normalizeWeekday(int tm_wday);
+void timeToString(Time *time, char *out, size_t outlen);
 
 #endif

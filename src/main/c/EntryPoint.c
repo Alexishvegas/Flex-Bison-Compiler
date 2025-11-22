@@ -30,7 +30,7 @@ const int main(const int length, const char ** arguments) {
 		initializeBisonActionsModule(&compilerState),
 		initializeFrontendModule(lexicalAnalyzer),
 		initializeValidatorModule(),
-		// initializeGeneratorModule()
+		initializeGeneratorModule()
 	};
 	CompilationStatus compilationStatus = executeSyntacticAnalysis();
 	Program * program = compilerState.abstractSyntaxtTree;
@@ -40,15 +40,19 @@ const int main(const int length, const char ** arguments) {
 		SymbolTable * symbolTable;
 		logDebugging(logger, "Program Validation...");
 		ValidationResult validationResult = executeValidator(&compilerState, symbolTable);
-		// if (computationResult.succeeded) {
-		// 	compilerState.value = computationResult.value;
-		// 	executeGenerator(&compilerState);
-		// }
-		// else {
-		// 	logError(logger, "The computation phase rejects the input program.");
-		// 	compilationStatus = FAILED;
-		// }
-		logDebugging(logger, " COMPILATION SUCCEEDED");
+		if (validationResult.succeeded) {
+			compilerState.value = validationResult.value;
+			bool generationSuccess = executeGenerator(&compilerState);
+			if(generationSuccess){
+				logDebugging(logger, "Generation successful")
+			}else{
+				logError(logger, "Generation failed.")
+			}
+		}
+		else {
+			logError(logger, "The validation phase rejects the input program.");
+			compilationStatus = FAILED;
+		}
 		// ...end of the Backend. -----------------------------------------------------------------
 		// ----------------------------------------------------------------------------------------
 	}
