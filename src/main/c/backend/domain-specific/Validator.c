@@ -5,12 +5,14 @@ static bool validateHeader(Header * header);
 static bool validateTimezone(TimezoneDecl * timezoneDecl);
 static bool validateColorList(ColorList * colorList);
 static bool validateYearBlock(YearBlock * yearBlock);
+static bool validateMonthBlocks(MonthBlocks * monthBlocks, int year);
 static bool validateMonthBlock(MonthBlock * monthBlock, int year);
 static bool validateStatement(Statement * statement, int month, int year);
 static bool validateEvent(EventDecl * event, int month, int year);
 static bool validateTimeInterval(Time *start, Time *end);
 static bool validateDate(int year, int month, int day);
 static bool validateOverride(OverrideDecl * override, int month, int year);
+static DayNumber * expandWeekdays(int year, int month, int *weekdayList, int weekdayCount);
 
 /* MODULE INTERNAL STATE */
 
@@ -34,6 +36,7 @@ ModuleDestructor initializeValidatorModule() {
 ValidationResult executeValidator(CompilerState * compilerState, SymbolTable * table) {
 	initSymbolTable(table);
 	Program * program = compilerState->abstractSyntaxtTree;
+	logDebugging(_logger, "hola1");
 	bool validHeader = validateHeader(program->header);
 	bool validYearBlock = validateYearBlock(program->yearBlock);
 	ValidationResult validationResult = {
@@ -48,7 +51,9 @@ static bool validateHeader(Header * header){
 		logDebugging(_logger, "Valid header (no header)");
 		return true;
 	}
+	logDebugging(_logger, "in header");
 	bool validTimezone = validateTimezone(header->timezoneDecl);
+	logDebugging(_logger, "timezone ok");
 	bool validColorList = validateColorList(header->colorList);
 	return validTimezone && validColorList;
 }
@@ -59,7 +64,7 @@ static bool validateTimezone(TimezoneDecl * timezoneDecl) {
 		return true;
 	}
 	char * timezone = timezoneDecl->timezone;
-
+	
 	char *signPtr = strchr(timezone, '+');
     if (signPtr == NULL) {
         signPtr = strchr(timezone, '-');
@@ -68,14 +73,14 @@ static bool validateTimezone(TimezoneDecl * timezoneDecl) {
 		logError(_logger, "Invalid Timezone, no sign");
         return false; 
     }
-
+	
 	const char *validPrefixes[] = {
         "UTC", "GMT",
         "EST","EDT","CST","CDT","MST","MDT","PST","PDT",
         "WET","CET","EET"
     };
 	int prefixLen = signPtr - timezone;
-	char * prefix;
+	char prefix[prefixLen+1];
 	strncpy(prefix, timezone, prefixLen);
 	prefix[prefixLen] = '\0';
 	bool prefixOK = false;
@@ -105,14 +110,14 @@ static bool validateTimezone(TimezoneDecl * timezoneDecl) {
 static bool validateColorList(ColorList * colorList) {
 	if(colorList == NULL){
 		logDebugging(_logger, "Valid ColorList (no colorList)");
+		return true;
 	}
 	ColorDef * current = colorList->firstColorDef;
 	
 	bool success = true;
 	while(current != NULL && success){  //mejorar estilo
-		ColorData * data = {
-							strdup(current->color->hexValue)
-						};
+		ColorData * data = calloc(1, sizeof(ColorData));
+		data->hexColor = strdup(current->color->hexValue);
 		success = addSymbol(current->color->name, ENTITY_COLOR, data);
 		if(!success){
 			logError(_logger, "Invalid color declaration");
@@ -198,7 +203,7 @@ static bool validateEvent(EventDecl * event, int month, int year){
 		return false;
 	}
 	if(findSymbol(event->eventBody->colorId) == NULL){
-		logerror(_logger, "Invalid Event declaration '%s': color not previously declared", event->identifier);
+		logError(_logger, "Invalid Event declaration '%s': color not previously declared", event->identifier);
 		return false;
 	}
 
@@ -236,7 +241,7 @@ static bool validateOverride(OverrideDecl * override, int month, int year){
 		return false;
 	}
 	if(findSymbol(override->eventBody->colorId) == NULL){
-		logerror(_logger, "Invalid Override declaration '%s': color not previously declared", override->identifier);
+		logError(_logger, "Invalid Override declaration '%s': color not previously declared", override->identifier);
 		return false;
 	}
 	logDebugging(_logger, "Valid Override declaration");

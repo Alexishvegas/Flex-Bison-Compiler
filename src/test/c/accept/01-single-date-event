@@ -1,7 +1,13 @@
 timezone GMT-3
+define color red #ff0000
+define color green #1e5a1e
 year 2025 {
-    month August {
-        event ExamenParcial on Monday from 09:00 to 11:00 { color red }
+    month November {
+        event Logica on Monday from 09:00 to 11:00 { color red }
+        event Futbol on Tuesday and Thursday from 19:00 to 21:00 { 
+            color green 
+            description "Llevar medias largas y botines"
+            }
     }
 }
 

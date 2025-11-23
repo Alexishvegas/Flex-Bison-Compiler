@@ -37,22 +37,24 @@ const int main(const int length, const char ** arguments) {
 	if (compilationStatus == SUCCEEDED) {
 		// ----------------------------------------------------------------------------------------
 		// Beginning of the Backend... ------------------------------------------------------------
-		SymbolTable * symbolTable;
+		SymbolTable * symbolTable = calloc(1, sizeof(SymbolTable));
 		logDebugging(logger, "Program Validation...");
 		ValidationResult validationResult = executeValidator(&compilerState, symbolTable);
 		if (validationResult.succeeded) {
 			compilerState.value = validationResult.value;
 			bool generationSuccess = executeGenerator(&compilerState);
 			if(generationSuccess){
-				logDebugging(logger, "Generation successful")
+				logDebugging(logger, "Generation successful");
 			}else{
-				logError(logger, "Generation failed.")
+				logError(logger, "Generation failed.");
 			}
 		}
 		else {
 			logError(logger, "The validation phase rejects the input program.");
 			compilationStatus = FAILED;
 		}
+		freeSymbolTable();
+		free(symbolTable);
 		// ...end of the Backend. -----------------------------------------------------------------
 		// ----------------------------------------------------------------------------------------
 	}

@@ -204,7 +204,7 @@ bool executeGenerator(CompilerState * compilerState) {
 
 /* PRIVATE FUNCTIONS */
 static bool generateCode(Program *prog, const char *outputFile) {
-    if (!prog || !prog->yearBlock || !outputFile) return;
+    if (!prog || !prog->yearBlock || !outputFile) return false;
 
     FILE *f = fopen(outputFile, "w");
     if (!f) {
@@ -253,7 +253,7 @@ static bool generateCode(Program *prog, const char *outputFile) {
             /* Asegurar escape en JS string */
             char *nameEsc = html_escape(cd->color->name);
             char *hexEsc = html_escape(cd->color->hexValue);
-            fprintf(f, "COLORS[%s] = \"%s\";\n", "\"", "\""); /* placeholder to keep structure */
+            fprintf(f, "COLORS[\"%s\"] = \"%s\";\n", cd->color->name, cd->color->hexValue); /* placeholder to keep structure */
             /* we'll write properly below to avoid duplication - but simpler: write as JS object literal */
             free(nameEsc); 
             free(hexEsc);

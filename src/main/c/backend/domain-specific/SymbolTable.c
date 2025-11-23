@@ -4,6 +4,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+static bool colorExists(char * id, char * hexColor);
+static bool eventOverlap(char * id, EventData * data);
+static char *toStringEventData(char *id, int year, int month, int day, EventData *data);
+
 static Logger *logger = NULL;
 static SymbolTable * table = NULL;
 
@@ -43,7 +47,7 @@ static bool colorExists(char * id, char * hexColor) {
     for (int i = 0; i < table->count; i++) {
         if(table->symbols[i].type == ENTITY_COLOR){
             ColorData * cData = (ColorData*) table->symbols[i].data;
-            if (strcmp(table->symbols[i].id, id) == 0 || strcmp(cData->hexColor, hexColor == 0)) {
+            if (strcmp(table->symbols[i].id, id) == 0 || strcmp(cData->hexColor, hexColor) == 0) {
                 return true;
             }
         }
@@ -108,8 +112,6 @@ void freeSymbolTable() {
             free(data);
         } else if (table->symbols[i].type == ENTITY_EVENT) {
             EventData * data = (EventData *) table->symbols[i].data;
-            free(data->start);
-            free(data->end);
             DayNumber * current = data->days;
             while(current != NULL){
                 DayNumber * next = current->next;
@@ -127,7 +129,7 @@ void freeSymbolTable() {
 }
 
 
-char *toStringEventData(char *id, int year, int month, int day, EventData *data) {
+static char *toStringEventData(char *id, int year, int month, int day, EventData *data) {
     if (id == NULL || data == NULL) return NULL;
 
     char startBuf[6];

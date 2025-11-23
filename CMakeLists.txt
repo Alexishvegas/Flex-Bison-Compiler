@@ -34,7 +34,8 @@ if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
 	# The header files (*.h extension), are automatically included from the source-codes.
 	add_executable(Flex-Bison-Compiler
 		src/main/c/backend/code-generation/Generator.c
-		src/main/c/backend/domain-specific/Calculator.c
+		src/main/c/backend/domain-specific/Validator.c
+		src/main/c/backend/domain-specific/SymbolTable.c
 		src/main/c/EntryPoint.c
 		src/main/c/frontend/Frontend.c
 		src/main/c/frontend/lexical-analysis/FlexActions.c
@@ -45,6 +46,7 @@ if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
 		src/main/c/support/configuration/Environment.c
 		src/main/c/support/language/String.c
 		src/main/c/support/logging/Logger.c
+		src/main/c/support/utils/TimeUtils.c
 		# Add more *.c files if needed (otherwise, they won't be compiled).
 		# ...
 	)
