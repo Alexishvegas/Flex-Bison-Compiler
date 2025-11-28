@@ -111,6 +111,7 @@ DayList * SingleDaySemanticAction(int day) {
     _logSyntacticAnalyzerAction(__FUNCTION__);
     DayList * dayList = calloc(1, sizeof(DayList));
     dayList->days[day - 1] = day;
+    logDebugging(_logger, "DAY SAVED: %d in %d", day, day-1);
     dayList->count = 1;
 
     return dayList;
@@ -167,6 +168,10 @@ OverrideDecl * CreateOverrideSemanticAction(char * identifier, EventBody * body)
 	override->identifier = identifier; //strdup
 	override->eventBody = body;
 	return override;
+}
+
+EventDecl * CreateEventWithoutBodySemanticAction(char * identifier, EventSpec * spec){
+    return CreateEventSemanticAction(identifier, spec, NULL);
 }
 
 EventDecl * CreateEventSemanticAction(char * identifier, EventSpec * spec, EventBody * body) {

@@ -27,8 +27,8 @@ struct ColorData {
 };
 
 struct EventData {
-    int year; //creo que no va
-    int month; //creo que no va
+    int year; 
+    int month; 
     Time * start;
     Time * end;
     DayNumber * days;

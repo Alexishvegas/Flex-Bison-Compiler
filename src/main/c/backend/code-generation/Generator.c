@@ -122,51 +122,78 @@ static bool generateCode(Program *prog, const char *outputFile) {
         for (int mi = 0; mi < 12; ++mi) {
             MonthBlock *mb = yb->monthBlocks->months[mi];
             if (!mb) continue;
-            int month = mb->month; /* asumo 1..12 */
+            int month = mb->month; 
             Statements *stmts = mb->statements;
             if (!stmts) continue;
             Statement *s = stmts->firstStatement;
             while (s) {
                 if (s->type == STATEMENT_EVENT && s->eventDecl) {
                     EventDecl *ed = s->eventDecl;
-                    EventSpec *es = ed->eventSpec;
-                    EventBody *eb = ed->eventBody;
+                    EventBody *eb = s->eventDecl->eventBody;
+                    
+                    Symbol * sym = findSymbol(ed->identifier);
+                    if(!sym){
+                        s = s->nextStatement;
+                        logError(_logger, "Symbol %s not found in table", ed->identifier);
+                        continue;
+                    }
+
+                    EventData * edata = (EventData*) sym->data;
+                    
+                    char startS[16] = "";
+                    char endS[16] = "";
+                    timeToString(edata->start, startS, sizeof(startS));
+                    timeToString(edata->end, endS, sizeof(endS));
+
                     const char *colorHex = eb && eb->colorId ? lookup_color_hex(prog->header ? prog->header->colorList : NULL, eb->colorId) : "#888888";
                     char *idEsc = html_escape(ed->identifier ? ed->identifier : "");
                     char *descEsc = html_escape(eb && eb->description ? eb->description : "");
                     char *urlEsc = html_escape(eb && eb->url ? eb->url : "");
-                    if (es->type == SPEC_DAYOFMONTH) {
-                        int day = es->dayOfMonth;
-                        /* emit single event */
-                        char startS[16] = "";
-                        char endS[16] = "";
-                        timeToString(es->start, startS, sizeof(startS));
-                        timeToString(es->end, endS, sizeof(endS));
-                        fprintf(f, "  { id: \"%s\", color: \"%s\", description: \"%s\", url: \"%s\", date: \"%04d-%02d-%02d\", start: \"%s\", end: \"%s\" },\n",
-                                idEsc, colorHex, descEsc, urlEsc, year, month, day,
-                                startS, endS);
-                    } else if (es->type == SPEC_DAYLIST && es->dayList) {
-                        DayList *dl = es->dayList;
-                        /* Para cada día del mes, chequeo si su weekday está en la lista y emito evento */
-                        int dim = daysInMonth(year, month);
-                        for (int d = 1; d <= dim; ++d) {
-                            int wd = normalizeWeekday(weekday(year, month, d)); /* 0..6 */
-                            /* verificar si wd está en dl->days[] */
-                            int present = 0;
-                            for (int k=0;k<dl->count;++k) {
-                                if (dl->days[k] == wd) { present = 1; break; }
-                            }
-                            if (present) {
-                                char startS[16] = "";
-                                char endS[16] = "";
-                                timeToString(es->start, startS, sizeof(startS));
-                                timeToString(es->end, endS, sizeof(endS));
-                                fprintf(f, "  { id: \"%s\", color: \"%s\", description: \"%s\", url: \"%s\", date: \"%04d-%02d-%02d\", start: \"%s\", end: \"%s\" },\n",
-                                    idEsc, colorHex, descEsc, urlEsc, year, month, d,
-                                    startS, endS);
-                            }
-                        }
+                    
+                    for (DayNumber *dn = edata->days; dn; dn = dn->next) {
+                        int day = dn->day;
+                        fprintf(f,
+                            "  { id: \"%s\", color: \"%s\", description: \"%s\", url: \"%s\", "
+                            "date: \"%04d-%02d-%02d\", start: \"%s\", end: \"%s\" },\n",
+                            idEsc, colorHex, descEsc, urlEsc,
+                            edata->year, edata->month, day,
+                            startS, endS
+                        );
                     }
+                    
+                    
+                    // if (es->type == SPEC_DAYOFMONTH) {
+                    //     int day = es->dayOfMonth;
+                    //     /* emit single event */
+                    //     char startS[16] = "";
+                    //     char endS[16] = "";
+                    //     timeToString(es->start, startS, sizeof(startS));
+                    //     timeToString(es->end, endS, sizeof(endS));
+                    //     fprintf(f, "  { id: \"%s\", color: \"%s\", description: \"%s\", url: \"%s\", date: \"%04d-%02d-%02d\", start: \"%s\", end: \"%s\" },\n",
+                    //             idEsc, colorHex, descEsc, urlEsc, year, month, day,
+                    //             startS, endS);
+                    // } else if (es->type == SPEC_DAYLIST && es->dayList) {
+                    //     DayList *dl = es->dayList;
+                    //     /* Para cada día del mes, chequeo si su weekday está en la lista y emito evento */
+                    //     int dim = daysInMonth(year, month);
+                    //     for (int d = 1; d <= dim; ++d) {
+                    //         int wd = normalizeWeekday(weekday(year, month, d)); /* 0..6 */
+                    //         /* verificar si wd está en dl->days[] */
+                    //         int present = 0;
+                    //         for (int k=0;k<dl->count;++k) {
+                    //             if (dl->days[k] == wd) { present = 1; break; }
+                    //         }
+                    //         if (present) {
+                    //             char startS[16] = "";
+                    //             char endS[16] = "";
+                    //             timeToString(es->start, startS, sizeof(startS));
+                    //             timeToString(es->end, endS, sizeof(endS));
+                    //             fprintf(f, "  { id: \"%s\", color: \"%s\", description: \"%s\", url: \"%s\", date: \"%04d-%02d-%02d\", start: \"%s\", end: \"%s\" },\n",
+                    //                 idEsc, colorHex, descEsc, urlEsc, year, month, d,
+                    //                 startS, endS);
+                    //         }
+                    //     }
+                    // }
                     free(idEsc);
                     free(descEsc);
                     free(urlEsc);
@@ -181,7 +208,7 @@ static bool generateCode(Program *prog, const char *outputFile) {
     /* Script para renderizar calendario y modal */
     fprintf(f,
 "/* UTILIDADES JS */\n"
-"function firstDayOfMonth(y,m){ return new Date(y,m-1,1).getDay(); /* 0..6 (lun..dom) */ }\n"
+"function firstDayOfMonth(y,m){ return (new Date(y,m-1,1).getDay() + 6) %% 7; /* 0..6 (lun..dom) */ }\n"
 "function daysInMonth(y,m){ return new Date(y,m,0).getDate(); }\n"
 "\n"
 "let currentYear = YEAR;\n"

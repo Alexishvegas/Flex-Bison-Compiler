@@ -1,5 +1,5 @@
 year 2025 { 
-    month August {
+    month December {
         event Examen on Monday from 09:00 to 11:00 { description "rezaMalena" }
     }
 }

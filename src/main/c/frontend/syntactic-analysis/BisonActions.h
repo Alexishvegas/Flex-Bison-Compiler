@@ -29,6 +29,7 @@ EventSpec * DayListSpecSemanticAction(DayList * dayList, Time * start, Time * en
 EventSpec * DayOfMonthSpecSemanticAction(int dayOfMonth, Time * start, Time * end);
 OverrideDecl * CreateOverrideSemanticAction(char * identifier, EventBody * body);
 EventDecl * CreateEventSemanticAction(char * indentifier, EventSpec * spec, EventBody * body);
+EventDecl * CreateEventWithoutBodySemanticAction(char * identifier, EventSpec * spec);
 Statement * OverrideStatementSemanticAction(OverrideDecl * override);
 Statement * EventStatementSemanticAction(EventDecl * event);
 Statements * SingleStatementListSemanticAction(Statement * statement);

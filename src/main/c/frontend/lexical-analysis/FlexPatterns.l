@@ -15,11 +15,9 @@
  */
 
 
-// extern CompilationStatus EnterMultilineCommentLexemeAction(FlexContext context);
 extern CompilationStatus EOFLexemeAction();
 extern CompilationStatus IgnoredLexemeAction();
 extern CompilationStatus IntegerLexemeAction();
-// extern CompilationStatus LeaveMultilineCommentLexemeAction();
 extern CompilationStatus UnknownLexemeAction();
 extern CompilationStatus TokenLexemeAction(TokenLabel label);
 extern CompilationStatus StringValueLexemeAction(TokenLabel label);

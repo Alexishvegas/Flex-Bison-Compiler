@@ -217,6 +217,7 @@ statement: event_decl										{ $$ = EventStatementSemanticAction($1); }
 
 event_decl: 
 	EVENT IDENTIFIER event_spec LBRACE event_body RBRACE 	{ $$ = CreateEventSemanticAction($2, $3, $5); }
+	| EVENT IDENTIFIER event_spec							{ $$ = CreateEventWithoutBodySemanticAction($2, $3); }
 	;
 
 override_decl: OVERRIDE IDENTIFIER LBRACE event_body RBRACE		{ $$ = CreateOverrideSemanticAction($2, $4); }

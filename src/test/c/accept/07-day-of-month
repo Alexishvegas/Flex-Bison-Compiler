@@ -1,7 +1,7 @@
 timezone GMT+0
 
 year 2025 { 
-    month August {
+    month December {
         event Clase on 15 from 10:00 to 11:00 { 
             description "Llevar Laptop" 
             url "https://meet.google.com/xxx-yyyy-zzz" 

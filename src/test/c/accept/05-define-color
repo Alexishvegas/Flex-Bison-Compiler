@@ -2,7 +2,7 @@ timezone GMT-10
 define color cyan #00FFFF
 
 year 2025 { 
-    month August {
-        event Reunion on Tuesday from 14:00 to 15:00 { color cyan }
+    month December {
+        event Logica on Tuesday from 14:00 to 16:00 { color cyan }
     }
 }

@@ -1,8 +1,7 @@
-timezone UST+5
-
-year 2026 { 
-    month April {
-        event Clases on Monday from 08:00 to 10:00 { color blue }
+timezone UTC+5
+year 2025 { 
+    month December {
+        event Clases on Monday from 08:00 to 10:00
     }
 }
 

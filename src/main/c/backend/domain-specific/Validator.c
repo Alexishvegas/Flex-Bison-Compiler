@@ -200,10 +200,13 @@ static bool validateEvent(EventDecl * event, int month, int year){
 		logError(_logger, "Invalid Event declaration '%s': collision", event->identifier);
 		return false;
 	}
-	if(findSymbol(event->eventBody->colorId) == NULL){
-		logError(_logger, "Invalid Event declaration '%s': color not previously declared", event->identifier);
-		return false;
+	if(event->eventBody != NULL && event->eventBody->colorId != NULL){
+		if(findSymbol(event->eventBody->colorId) == NULL){
+			logError(_logger, "Invalid Event declaration '%s': color not previously declared", event->identifier);
+			return false;
+		}
 	}
+	
 
 	logDebugging(_logger, "Valid Event declaration: '%s'", event->identifier);
 	return true;
@@ -247,7 +250,7 @@ static bool validateOverride(OverrideDecl * override, int month, int year){
 }
 
 
-static DayNumber * expandWeekdays(int year, int month, int *weekdayList, int weekdayCount) {
+static DayNumber * expandWeekdays(int year, int month, int * weekdayList, int weekdayCount) {
     int dim = daysInMonth(year, month);
     DayNumber *head = NULL;
     DayNumber *tail = NULL;
@@ -257,15 +260,17 @@ static DayNumber * expandWeekdays(int year, int month, int *weekdayList, int wee
         int myday = normalizeWeekday(tm_wday);      // 0=Mon..6=Sun
 
         // Ver si myday está en weekdayList
-        int match = 0;
-        for (int i = 0; i < weekdayCount; i++) {
-            if (weekdayList[i] == myday) {
-                match = 1;
-                break;
-            }
-        }
+        int match = (weekdayList[myday] == (myday+1));
+        // for (int i = 0; i < weekdayCount; i++) {
+        //     if (weekdayList[i] == myday) {
+        //         match = 1;
+        //         break;
+        //     }
+        // }
+		
 
         if (match) {
+			logDebugging(_logger, "DIA %d (numero: %d)", myday, d);
             DayNumber *node = malloc(sizeof(DayNumber));
             node->day = d;
             node->next = NULL;

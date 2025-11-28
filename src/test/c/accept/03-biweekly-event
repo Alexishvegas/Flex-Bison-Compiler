@@ -1,7 +1,0 @@
-timezone GMT+1
-year 2025 { 
-    month August {
-        event Entrenamiento on Saturday from 10:00 to 11:00 { color green description "Fisico y futbol" }
-    }
-}
-

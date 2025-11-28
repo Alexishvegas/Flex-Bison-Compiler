@@ -1,12 +1,10 @@
 timezone GMT-3
-define color red #ff0000
-define color green #1e5a1e
+define color violeta #d400ff
 year 2025 {
-    month November {
-        event Logica on Monday from 09:00 to 11:00 { color red }
-        event Futbol on Tuesday and Thursday from 19:00 to 21:00 { 
-            color green 
-            description "Llevar medias largas y botines"
+    month December {
+        event Fiesta on 12 from 20:00 to 23:00 { 
+            color violeta 
+            description "Fiesta de fin de año del laburo"
             }
     }
 }
