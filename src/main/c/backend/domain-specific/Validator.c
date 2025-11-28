@@ -193,7 +193,7 @@ static bool validateEvent(EventDecl * event, int month, int year){
 		data->days = expandWeekdays(year, month, event->eventSpec->dayList->days, event->eventSpec->dayList->count);
 	}else{
 		DayNumber * day = calloc(1, sizeof(DayNumber));
-		day = event->eventSpec->dayOfMonth;
+		day->day = event->eventSpec->dayOfMonth;
 		data->days = day;
 	}
 	if(!addSymbol(event->identifier, ENTITY_EVENT, data)){

@@ -72,7 +72,7 @@ static bool generateCode(Program *prog, const char *outputFile) {
 "    .monthTitle{font-size:20px; font-weight:700}\n"
 "    /* modal */\n"
 "    .modalBg{position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.4)}\n"
-"    .modal{background:#fff; padding:20px; border-radius:10px; max-width:600px; width:90%}\n" 
+"    .modal{background:#fff; padding:20px; border-radius:10px; max-width:600px; width:90%%}\n" 
 "    .closeBtn{float:right; cursor:pointer; font-weight:700}\n" 
 "  </style>\n"
 "</head>\n"
@@ -260,7 +260,7 @@ static bool generateCode(Program *prog, const char *outputFile) {
 
     fclose(f);
     /* mensaje opcional en stderr */
-    logDebugging(_logger, "HTML file successfully generated in: %s\n", outputFile);
+    logDebugging(_logger, "HTML file successfully generated in: %s", outputFile);
     return true;
 }
 
