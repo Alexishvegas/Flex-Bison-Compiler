@@ -28,7 +28,7 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 
 	signed int integer;
 	TokenLabel token;
-	char * strVal;
+	char * text;
 
 
 
@@ -51,6 +51,8 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 	EventBody * event_body;
 	EventProp * event_prop;
 	Time * time;
+	int day_of_week;
+	int month_name;
 }
 
 /**
@@ -76,7 +78,7 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %destructor { destroyColorDef($$); } <color_def>
 %destructor { destroyTimezoneDecl($$); } <timezone_decl>
 %destructor { destroyHeader($$); } <header>
-%destructor { destroyString($$); } <strVal>
+%destructor { destroyString($$); } <text>
 
 
 /** Terminals. */
@@ -102,19 +104,41 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %token <token> STARTING
 %token <token> ONLY
 %token <token> IF
-%token <strVal> DAY_OF_WEEK
+%token <text> DAY_OF_WEEK
 %token <token> DEFINE
 %token <token> COLOR
-%token <strVal> HEXVALUE
+%token <text> HEXVALUE
 %token <token> DESCRIPTION
 %token <token> URL
-%token <strVal> STRING
-%token <strVal> DATE
-%token <strVal> TIME
-%token <strVal> TIMEZONE_NAME
-%token <strVal> MONTH_NAME
-%token <strVal> IDENTIFIER
-%token <strVal> URL_PATTERN
+%token <text> STRING
+%token <text> DATE
+%token <text> TIME
+%token <text> TIMEZONE_NAME
+%token <text> MONTH_NAME
+%token <text> IDENTIFIER
+%token <text> URL_PATTERN
+
+%token <integer> MONDAY
+%token <integer> TUESDAY
+%token <integer> WEDNESDAY
+%token <integer> THURSDAY
+%token <integer> FRIDAY
+%token <integer> SATURDAY
+%token <integer> SUNDAY
+
+%token <integer> JANUARY
+%token <integer> FEBRUARY
+%token <integer> MARCH
+%token <integer> APRIL
+%token <integer> MAY
+%token <integer> JUNE
+%token <integer> JULY
+%token <integer> AUGUST
+%token <integer> SEPTEMBER
+%token <integer> OCTOBER
+%token <integer> NOVEMBER
+%token <integer> DECEMBER
+
 
 %token <token> IGNORED
 %token <token> UNKNOWN
@@ -138,6 +162,8 @@ void yyerror(const YYLTYPE * location, const char * message) {}
 %type <event_body> event_body
 %type <event_prop> event_prop
 %type <time> time
+%type <day_of_week> day_of_week
+%type <month_name> month_name
 
 /**
  * Precedence and associativity.
@@ -177,7 +203,7 @@ month_blocks: month_blocks month_block						{ $$ = AppendMonthBlockSemanticActio
 	| month_block											{ $$ = SingleMonthBlockSemanticAction($1); }
 	;
 
-month_block: MONTH MONTH_NAME LBRACE statements RBRACE 		{ $$ = StatementsMonthNameSemanticAction($2, $4); }
+month_block: MONTH month_name LBRACE statements RBRACE 		{ $$ = StatementsMonthIntegerSemanticAction($2, $4); }
 	| MONTH INTEGER LBRACE statements RBRACE				{ $$ = StatementsMonthIntegerSemanticAction($2, $4); }
 	;
 
@@ -205,8 +231,8 @@ time:
     ;
 
 
-day_list: DAY_OF_WEEK										{ $$ = SingleDayStringSemanticAction($1); }
-	| day_list AND DAY_OF_WEEK								{ $$ = AppendDayStringSemanticAction($1, $3); }
+day_list: day_of_week										{ $$ = SingleDaySemanticAction($1); }
+	| day_list AND day_of_week								{ $$ = AppendDaySemanticAction($1, $3); }
 	;
 
 event_body: event_body event_prop							{ $$ = EventBodyAppendSemanticAction($1, $2); }
@@ -217,6 +243,30 @@ event_prop: COLOR IDENTIFIER								{ $$ = ColorSemanticAction($2); }
 	| DESCRIPTION STRING									{ $$ = DescriptionSemanticAction($2); }
 	| URL STRING											{ $$ = UrlSemanticAction($2); }
 	;
+
+day_of_week: MONDAY											{ $$ = WeekdaySemanticAction($1); }
+	| TUESDAY												{ $$ = WeekdaySemanticAction($1); }
+	| WEDNESDAY 											{ $$ = WeekdaySemanticAction($1); }
+	| THURSDAY												{ $$ = WeekdaySemanticAction($1); }
+	| FRIDAY												{ $$ = WeekdaySemanticAction($1); }
+	| SATURDAY												{ $$ = WeekdaySemanticAction($1); }
+	| SUNDAY												{ $$ = WeekdaySemanticAction($1); }
+	;
+
+month_name:
+      JANUARY        										{ $$ = MonthSemanticAction($1); }
+    | FEBRUARY       										{ $$ = MonthSemanticAction($1); }
+    | MARCH          										{ $$ = MonthSemanticAction($1); }
+    | APRIL          										{ $$ = MonthSemanticAction($1); }
+    | MAY            										{ $$ = MonthSemanticAction($1); }
+    | JUNE           										{ $$ = MonthSemanticAction($1); }
+    | JULY           										{ $$ = MonthSemanticAction($1); }
+    | AUGUST         										{ $$ = MonthSemanticAction($1); }
+    | SEPTEMBER      										{ $$ = MonthSemanticAction($1); }
+    | OCTOBER        										{ $$ = MonthSemanticAction($1); }
+    | NOVEMBER       										{ $$ = MonthSemanticAction($1); }
+    | DECEMBER       										{ $$ = MonthSemanticAction($1); }
+;
 
 
 

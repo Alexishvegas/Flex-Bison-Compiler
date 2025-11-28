@@ -36,7 +36,6 @@ ModuleDestructor initializeValidatorModule() {
 ValidationResult executeValidator(CompilerState * compilerState, SymbolTable * table) {
 	initSymbolTable(table);
 	Program * program = compilerState->abstractSyntaxtTree;
-	logDebugging(_logger, "hola1");
 	bool validHeader = validateHeader(program->header);
 	bool validYearBlock = validateYearBlock(program->yearBlock);
 	ValidationResult validationResult = {
@@ -51,9 +50,8 @@ static bool validateHeader(Header * header){
 		logDebugging(_logger, "Valid header (no header)");
 		return true;
 	}
-	logDebugging(_logger, "in header");
+
 	bool validTimezone = validateTimezone(header->timezoneDecl);
-	logDebugging(_logger, "timezone ok");
 	bool validColorList = validateColorList(header->colorList);
 	return validTimezone && validColorList;
 }

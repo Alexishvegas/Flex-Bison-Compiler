@@ -59,6 +59,8 @@ void destroyEventSpec(EventSpec * spec) {
 	switch (spec->type) {
 		case SPEC_DAYLIST: destroyDayList(spec->dayList); break;
 		case SPEC_DAYOFMONTH: break;
+		default:
+			logError(_logger, "Something went wrong: Spec type not recognized");
 	}
 	destroyTime(spec->start);
 	destroyTime(spec->end);
@@ -97,6 +99,7 @@ void destroyStatement(Statement * statement) {
             destroyOverrideDecl(statement->OverrideDecl);
             break;
         default:
+			logError(_logger, "Something went wrong: Statement type not recognized");
             break;
     }
 

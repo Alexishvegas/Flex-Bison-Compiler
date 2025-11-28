@@ -26,6 +26,8 @@ extern CompilationStatus StringValueLexemeAction(TokenLabel label);
 extern CompilationStatus StringLexemeAction();
 extern CompilationStatus TimeLexemeAction();
 extern CompilationStatus DateLexemeAction();
+extern CompilationStatus WeekdayLexemeAction(TokenLabel label, int weekday);
+extern CompilationStatus MonthLexemeAction(TokenLabel label, int month);
 
 %}
 
@@ -49,8 +51,6 @@ letter              [A-Za-z]
 identifier          {letter}({letter}|{digit}|[_\-])*
 time                {digit}{digit}:{digit}{digit}
 date                [0-9]{4}-[0-9]{2}-[0-9]{2}
-month_name          (January|February|March|April|May|June|July|August|September|October|November|December)
-weekday             (Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)
 timezone_name       ([A-Z]{1,5}[\+\-][0-9]{1,2})
 url_pattern         https?:\/\/[A-Za-z0-9\.\-_/]+
 string              \"([^\"\\]|\\.)*\"
@@ -98,8 +98,27 @@ hex_value           #[0-9A-Fa-f]{6}
 "description"                       { return TokenLexemeAction(DESCRIPTION); }
 "url"                               { return TokenLexemeAction(URL);}
 
-{month_name}                        { return StringValueLexemeAction(MONTH_NAME); }
-{weekday}                           { return StringValueLexemeAction(DAY_OF_WEEK); }
+"Monday"                            { return WeekdayLexemeAction(MONDAY, 1); }
+"Tuesday"                           { return WeekdayLexemeAction(TUESDAY, 2); }
+"Wednesday"                         { return WeekdayLexemeAction(WEDNESDAY, 3); }
+"Thursday"                          { return WeekdayLexemeAction(THURSDAY, 4); }
+"Friday"                            { return WeekdayLexemeAction(FRIDAY, 5); }
+"Saturday"                          { return WeekdayLexemeAction(SATURDAY, 6); }
+"Sunday"                            { return WeekdayLexemeAction(SUNDAY, 7); }
+
+"January"                           { return MonthLexemeAction(JANUARY, 1); }
+"February"                          { return MonthLexemeAction(FEBRUARY, 2); }
+"March"                             { return MonthLexemeAction(MARCH, 3); }
+"April"                             { return MonthLexemeAction(APRIL, 4); }
+"May"                               { return MonthLexemeAction(MAY, 5); }
+"June"                              { return MonthLexemeAction(JUNE, 6); }
+"July"                              { return MonthLexemeAction(JULY, 7); }
+"August"                            { return MonthLexemeAction(AUGUST, 8); }
+"September"                         { return MonthLexemeAction(SEPTEMBER, 9); }
+"October"                           { return MonthLexemeAction(OCTOBER, 10); }
+"November"                          { return MonthLexemeAction(NOVEMBER, 11); }
+"December"                          { return MonthLexemeAction(DECEMBER, 12); }
+
 {time}                              { return TimeLexemeAction(); }
 {date}                              { return DateLexemeAction(); }  //revisar, misma (por ahora no se usa)
 
