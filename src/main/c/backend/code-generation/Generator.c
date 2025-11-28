@@ -181,14 +181,15 @@ static bool generateCode(Program *prog, const char *outputFile) {
     /* Script para renderizar calendario y modal */
     fprintf(f,
 "/* UTILIDADES JS */\n"
-"function firstDayOfMonth(y,m){ return new Date(y,m-1,1).getDay(); /* 0..6 (lun..sab) */ }\n"
+"function firstDayOfMonth(y,m){ return new Date(y,m-1,1).getDay(); /* 0..6 (lun..dom) */ }\n"
 "function daysInMonth(y,m){ return new Date(y,m,0).getDate(); }\n"
 "\n"
 "let currentYear = YEAR;\n"
 "let currentMonth = (new Date()).getMonth() + 1; /* 1..12 */\n"
+"const monthNames = [\"Enero\", \"Febrero\", \"Marzo\", \"Abril\", \"Mayo\", \"Junio\", \"Julio\", \"Agosto\", \"Septiembre\", \"Octubre\", \"Noviembre\", \"Diciembre\"];\n"
 "\n"
 "function renderCalendar(year, month){\n"
-"  document.getElementById('monthTitle').textContent = year + ' - ' + month;\n"
+"  document.getElementById('monthTitle').textContent = year + ' - ' + monthNames[month-1];\n"
 "  const grid = document.getElementById('calGrid');\n"
 "  grid.innerHTML = '';\n"
 "  const startWeekday = firstDayOfMonth(year, month);\n"
