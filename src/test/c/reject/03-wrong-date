@@ -1,0 +1,5 @@
+year 2025 { 
+    month February {
+        event Error on 30 from 10:00 to 11:00
+    }
+}

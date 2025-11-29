@@ -1,0 +1,7 @@
+timezone GMT+3
+
+year 2025 {
+    month December {
+        event PokerNight on Saturday from 20:00 to 23:30 { color money }
+    }
+}

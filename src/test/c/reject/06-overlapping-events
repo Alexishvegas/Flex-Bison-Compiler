@@ -1,0 +1,6 @@
+year 2025 {
+    month December {
+        event FinalDerecho on 15 from 13:00 to 16:00
+        event FinalEco on 15 from 14:00 to 17:00
+    }
+}

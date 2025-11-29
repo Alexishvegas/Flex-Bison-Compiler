@@ -31,9 +31,6 @@ ModuleDestructor initializeGeneratorModule() {
 bool executeGenerator(CompilerState * compilerState) {
 	logDebugging(_logger, "Generating final output...");
     
-	// _generatePrologue();
-	//_generateProgram(compilerState->abstractSyntaxtTree);
-	// _generateEpilogue(compilerState->value);
 	logDebugging(_logger, "Generation is done.");
     return generateCode(compilerState->abstractSyntaxtTree, "index.html");
 }
@@ -80,7 +77,7 @@ static bool generateCode(Program *prog, const char *outputFile) {
 
     /* Generamos el array JS con todos los eventos calculados */
     fprintf(f, "<script>\n");
-    fprintf(f, "const YEAR = %d;\n", year);
+    fprintf(f, "const YEAR = new Date().getFullYear();\n");
     fprintf(f, "const COLORS = {};\n");
     /* Dump colors mapping */
     ColorDef *cd = (prog->header && prog->header->colorList) ? prog->header->colorList->firstColorDef : NULL;
@@ -162,38 +159,6 @@ static bool generateCode(Program *prog, const char *outputFile) {
                     }
                     
                     
-                    // if (es->type == SPEC_DAYOFMONTH) {
-                    //     int day = es->dayOfMonth;
-                    //     /* emit single event */
-                    //     char startS[16] = "";
-                    //     char endS[16] = "";
-                    //     timeToString(es->start, startS, sizeof(startS));
-                    //     timeToString(es->end, endS, sizeof(endS));
-                    //     fprintf(f, "  { id: \"%s\", color: \"%s\", description: \"%s\", url: \"%s\", date: \"%04d-%02d-%02d\", start: \"%s\", end: \"%s\" },\n",
-                    //             idEsc, colorHex, descEsc, urlEsc, year, month, day,
-                    //             startS, endS);
-                    // } else if (es->type == SPEC_DAYLIST && es->dayList) {
-                    //     DayList *dl = es->dayList;
-                    //     /* Para cada día del mes, chequeo si su weekday está en la lista y emito evento */
-                    //     int dim = daysInMonth(year, month);
-                    //     for (int d = 1; d <= dim; ++d) {
-                    //         int wd = normalizeWeekday(weekday(year, month, d)); /* 0..6 */
-                    //         /* verificar si wd está en dl->days[] */
-                    //         int present = 0;
-                    //         for (int k=0;k<dl->count;++k) {
-                    //             if (dl->days[k] == wd) { present = 1; break; }
-                    //         }
-                    //         if (present) {
-                    //             char startS[16] = "";
-                    //             char endS[16] = "";
-                    //             timeToString(es->start, startS, sizeof(startS));
-                    //             timeToString(es->end, endS, sizeof(endS));
-                    //             fprintf(f, "  { id: \"%s\", color: \"%s\", description: \"%s\", url: \"%s\", date: \"%04d-%02d-%02d\", start: \"%s\", end: \"%s\" },\n",
-                    //                 idEsc, colorHex, descEsc, urlEsc, year, month, d,
-                    //                 startS, endS);
-                    //         }
-                    //     }
-                    // }
                     free(idEsc);
                     free(descEsc);
                     free(urlEsc);

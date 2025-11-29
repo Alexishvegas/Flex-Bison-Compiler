@@ -110,7 +110,7 @@ struct YearBlock {
 	MonthBlocks * monthBlocks;
 };
 
-struct MonthBlocks { //agregar count
+struct MonthBlocks { 
 	MonthBlock * months[12];
 };
 

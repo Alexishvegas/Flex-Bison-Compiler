@@ -13,6 +13,7 @@ static bool validateTimeInterval(Time *start, Time *end);
 static bool validateDate(int year, int month, int day);
 static bool validateOverride(OverrideDecl * override, int month, int year);
 static DayNumber * expandWeekdays(int year, int month, int *weekdayList, int weekdayCount);
+static EventBody * copyBody(EventBody * body);
 
 /* MODULE INTERNAL STATE */
 
@@ -189,6 +190,7 @@ static bool validateEvent(EventDecl * event, int month, int year){
 	data->month = month;
 	data->start = event->eventSpec->start;
 	data->end = event->eventSpec->end;
+	data->ptr = event; //para el override (solución más simple que encontre)
 	if(event->eventSpec->type == SPEC_DAYLIST){
 		data->days = expandWeekdays(year, month, event->eventSpec->dayList->days, event->eventSpec->dayList->count);
 	}else{
@@ -235,18 +237,39 @@ static bool validateDate(int year, int month, int day) {
     return true;
 }
 
-//ACTUALIZAR (el override es mierda)
+
 static bool validateOverride(OverrideDecl * override, int month, int year){
-	if(findSymbol(override->identifier) == NULL){
+	Symbol * event = findSymbol(override->identifier);
+	if(event == NULL){
 		logError(_logger, "Invalid Override declaration: event '%s' not found", override->identifier);
 		return false;
 	}
-	if(findSymbol(override->eventBody->colorId) == NULL){
+	if(override->eventBody->colorId != NULL && findSymbol(override->eventBody->colorId) == NULL){
 		logError(_logger, "Invalid Override declaration '%s': color not previously declared", override->identifier);
 		return false;
 	}
+	EventData * data = (EventData*) event->data;
+	EventBody * oldBody = data->ptr->eventBody;
+	data->ptr->eventBody = copyBody(override->eventBody);
+	destroyEventBody(oldBody);
+
 	logDebugging(_logger, "Valid Override declaration");
 	return true;
+}
+
+static EventBody * copyBody(EventBody * body){
+	EventBody * toReturn = calloc(1, sizeof(EventBody));
+	if(body->colorId){
+		toReturn->colorId = strdup(body->colorId); 
+	}
+	if(body->description){
+		toReturn->description = strdup(body->description);
+	}
+	if(body->url){
+		toReturn->url = strdup(body->url);
+	}
+	
+	return toReturn;
 }
 
 
@@ -259,18 +282,9 @@ static DayNumber * expandWeekdays(int year, int month, int * weekdayList, int we
         int tm_wday = weekday(year, month, d);      // 0=Sunday..6=Saturday
         int myday = normalizeWeekday(tm_wday);      // 0=Mon..6=Sun
 
-        // Ver si myday está en weekdayList
         int match = (weekdayList[myday] == (myday+1));
-        // for (int i = 0; i < weekdayCount; i++) {
-        //     if (weekdayList[i] == myday) {
-        //         match = 1;
-        //         break;
-        //     }
-        // }
 		
-
         if (match) {
-			logDebugging(_logger, "DIA %d (numero: %d)", myday, d);
             DayNumber *node = malloc(sizeof(DayNumber));
             node->day = d;
             node->next = NULL;

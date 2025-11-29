@@ -1,0 +1,23 @@
+timezone GMT-3
+define color green #217621
+define color red #ff0000
+define color cyan #00ffff
+
+year 2025 {
+    month December {
+        event Protos on Tuesday and Thursday from 14:00 to 17:00 {
+            color red
+            url https://stackoverflow.com/questions/1187314/how-to-write-a-nginx-module
+        }
+        event Futbol on Wednesday from 19:00 to 21:00 {
+            color green
+            description "Llevar botines y canilleras"
+        }
+        event CumpleSebas on 5 from 20:00 to 23:00 
+
+        override CumpleSebas {
+            description "Comprar helado"
+            color cyan
+        }
+    }
+}

@@ -1,0 +1,12 @@
+timezone GMT+8
+define color green #00ff00
+
+year 2025 { 
+    month December {
+        event PAW on Monday from 17:00 to 20:00 { description "Consultas" }
+        override PAW {
+            description "Consultas y Sprint"
+            color green
+        }
+    }
+}

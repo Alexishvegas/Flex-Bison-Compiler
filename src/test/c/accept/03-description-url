@@ -2,7 +2,8 @@ timezone GMT+1
 year 2025 { 
     month December {
         event Entrenamiento on Saturday from 10:00 to 11:00 { 
-            description "Físico y fútbol" 
+            description "Físico y fútbol"
+            url https://www.afa.com.ar/3022/posts/visita-al-predio
             }
     }
 }

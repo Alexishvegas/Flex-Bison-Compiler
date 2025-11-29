@@ -1,0 +1,10 @@
+year 2025 {
+    month December {
+        event Comida on 17 from 20:00 to 22:00 {
+            description "Comida mexicana"
+        }
+        override Cena {
+            description "Cambio de planes: sushi"
+        }
+    }
+}

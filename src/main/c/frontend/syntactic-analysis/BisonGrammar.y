@@ -242,7 +242,7 @@ event_body: event_body event_prop							{ $$ = EventBodyAppendSemanticAction($1,
 
 event_prop: COLOR IDENTIFIER								{ $$ = ColorSemanticAction($2); }
 	| DESCRIPTION STRING									{ $$ = DescriptionSemanticAction($2); }
-	| URL STRING											{ $$ = UrlSemanticAction($2); }
+	| URL URL_PATTERN										{ $$ = UrlSemanticAction($2); }
 	;
 
 day_of_week: MONDAY											{ $$ = WeekdaySemanticAction($1); }

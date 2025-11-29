@@ -1,0 +1,5 @@
+year 2025 { 
+    month December {
+            event Turno on 12 from 19:00 to 17:00
+        }
+}

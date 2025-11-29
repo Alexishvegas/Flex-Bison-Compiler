@@ -1,0 +1,12 @@
+timezone GMT+0
+
+year 2025 { 
+    month November {
+        event ParcialInformatica on 15 from 10:00 to 11:00 { 
+            description "Llevar Laptop"  
+            }
+    }
+    month 12 {
+        event FinalInfo on 6 from 13:00 to 15:00
+    }
+}

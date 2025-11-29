@@ -50,7 +50,7 @@ identifier          {letter}({letter}|{digit}|[_\-])*
 time                {digit}{digit}:{digit}{digit}
 date                [0-9]{4}-[0-9]{2}-[0-9]{2}
 timezone_name       ([A-Z]{1,5}[\+\-][0-9]{1,2})
-url_pattern         https?:\/\/[A-Za-z0-9\.\-_/]+
+url_pattern         https?:[/][/][A-Za-z0-9._/-]+
 string              \"([^\"\\]|\\.)*\"
 hex_value           #[0-9A-Fa-f]{6}
 

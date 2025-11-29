@@ -1,0 +1,9 @@
+define color violeta #d400ff
+year 2025 {
+    month December {
+        event Fiesta on 12 from 20:00 to 23:00 { 
+            color violeta 
+            description "Fiesta de fin de año del laburo"
+            }
+    }
+}

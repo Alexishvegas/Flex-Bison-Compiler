@@ -32,6 +32,7 @@ struct EventData {
     Time * start;
     Time * end;
     DayNumber * days;
+    EventDecl * ptr;
 };
 
 struct DayNumber {
